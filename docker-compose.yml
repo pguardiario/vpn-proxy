@@ -1,10 +1,10 @@
-# nord-box\docker-compose.yml
+# vpn-proxy\docker-compose.yml
 version: "3.8"
 
 services:
-  nord-box:
+  vpn-proxy:
     build: .
-    container_name: nord-box
+    container_name: vpn-proxy
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
