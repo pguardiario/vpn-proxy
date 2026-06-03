@@ -1,0 +1,34 @@
+# nord-box\docker-compose.yml
+version: "3.8"
+
+services:
+  nord-box:
+    build: .
+    container_name: nord-box
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    environment:
+      # Secrets/config come from .env (see .env.example). docker-compose
+      # auto-loads .env in this directory for ${VAR} substitution.
+      - TOKEN=${TOKEN}
+      - TECHNOLOGY=${TECHNOLOGY:-NordLynx}
+      - CONNECT=${CONNECT:-New_York}
+      - NETWORK=${NETWORK:-192.168.1.0/24}
+      # Proxy port - single source of truth, consumed by start-proxy.sh.
+      - PROXY_PORT=${PROXY_PORT:-39888}
+      # Allow the proxy port through the killswitch (must match PROXY_PORT).
+      - PORTS=${PROXY_PORT:-39888}
+      # Start the local HTTP/HTTPS proxy once the VPN tunnel is up.
+      - POST_CONNECT=sh /scripts/start-proxy.sh
+    ports:
+      # Published on 127.0.0.1 only - reachable from this host, not the LAN.
+      # 39888 is an unpopular high port chosen to avoid conflicts.
+      - "127.0.0.1:${PROXY_PORT:-39888}:${PROXY_PORT:-39888}"  # tinyproxy
+    volumes:
+      - ./scripts:/scripts
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
