@@ -1,0 +1,6 @@
+# This project is deployed on Linux. Force LF line endings on checkout so
+# shell scripts and configs don't break with Windows CRLF (\r), which e.g.
+# tinyproxy's config parser and /bin/sh both reject.
+* text=auto eol=lf
+*.sh text eol=lf
+*.conf text eol=lf
